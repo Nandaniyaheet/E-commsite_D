@@ -1,4 +1,17 @@
 http://127.0.0.1:8000/accounts/login/?#
+http://127.0.0.1:8000/accounts/register/#
+http://127.0.0.1:8000/admin/  --> for admin
+
+
 
 for run the code 
 python manage.py runserver
+
+
+for super admin 
+
+Username (leave blank to use 'heetn'): adminH
+Email address: adminh@gamil.com       
+Password: heet@123
+Superuser created successfully.
+
