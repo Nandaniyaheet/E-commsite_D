@@ -7,3 +7,4 @@ def send_account_activation_email(email, email_token):
     email_from = settings.EMAIL_HOST_USER
     message = f'Hi, click of the link to active your account http://127.0.0.1:8000/accounts/activate/{email_token}'
     send_mail(subject, message, email_from, [email])
+    

@@ -56,6 +56,8 @@ def register_page(request):
         user_obj = User.objects.create(first_name = first_name , last_name= last_name , email = email , username = email)
         user_obj.set_password(password)
         user_obj.save()
+        print(vars(user_obj))  
+
 
         messages.success(request, 'An email has been sent on your mail.')
         return HttpResponseRedirect(request.path_info)
@@ -67,10 +69,15 @@ def register_page(request):
 
 
 def activate_email(request , email_token):
+    print("Activation link opened:", email_token)
     try:
         user = Profile.objects.get(email_token= email_token)
+        print("✅ Profile found:", user)
         user.is_email_verified = True
         user.save()
         return redirect('/')
     except Exception as e:
-        return HttpResponse
+        print("❌ Invalid token:", email_token)
+        return HttpResponse ('Invalid Email token')
+
+
