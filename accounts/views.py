@@ -73,4 +73,4 @@ def activate_email(request , email_token):
         user.save()
         return redirect('/')
     except Exception as e:
-        return HttpResponse
+        return HttpResponse('Invalid Email token')
