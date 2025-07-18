@@ -23,6 +23,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('admin/', admin.site.urls),
+    
 ]
 
 
@@ -32,7 +33,3 @@ if settings.DEBUG:
     
 
 urlpatterns += staticfiles_urlpatterns()
-
-
-
-# urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
