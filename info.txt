@@ -1,7 +1,7 @@
 http://127.0.0.1:8000/accounts/login/?#
 http://127.0.0.1:8000/accounts/register/#
 http://127.0.0.1:8000/admin/  --> for admin
-
+http://127.0.0.1:8000/product/laptop-bag/  --> for any products
 
 
 for run the code 
