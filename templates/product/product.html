@@ -2,6 +2,8 @@
 
 {% block start %}
 
+
+
 <section class="section-content padding-y bg">
     <div class="container">
 
@@ -11,12 +13,22 @@
                 <aside class="col-md-6">
                     <article class="gallery-wrap">
                         <div class="img-big-wrap">
-                            <div> <a href="#"><img src="/media/{{product.product_images.first.image}}"></a></div>
+                            {% if product.product_images.first %}
+                            <div>
+                                <!-- ✅ Main image with zoom modal trigger -->
+                                <a href="#" id="main-image-link">
+                                    <img id="main-image" src="/media/{{ product.product_images.first.image }}"
+                                        style="max-width:100%;">
+                                </a>
+                            </div>
+                            {% endif %}
                         </div> <!-- slider-product.// -->
                         <div class="thumbs-wrap">
                             {% for image in product.product_images.all %}
-                            <a href="#" class="item-thumb"> <img src="/media/{{image.image}}"></a>
-
+                            <a href="#" class="item-thumb"
+                                onclick="changeMainImage('/media/{{ image.image }}'); return false;">
+                                <img src="/media/{{ image.image }}">
+                            </a>
                             {% endfor %}
 
                         </div> <!-- slider-nav.// -->
@@ -27,7 +39,7 @@
 
                         <h2 class="title">{{product.product_name}}</h2>
 
-                        <div class="rating-wrap my-3">
+                        <!-- <div class="rating-wrap my-3">
                             <ul class="rating-stars">
                                 <li style="width:80%" class="stars-active">
                                     <i class="fa fa-star"></i> <i class="fa fa-star"></i>
@@ -42,19 +54,19 @@
                             </ul>
                             <small class="label-rating text-muted">132 reviews</small>
                             <small class="label-rating text-success"> <i class="fa fa-clipboard-check"></i> 154 orders
-                            </small>
-                        </div> <!-- rating-wrap.// -->
+                            </small> 
+                        </div> rating-wrap. -->
 
                         <div class="mb-3">
-                            <var class="price h4">Rs. {{product.price}}.00</var>
+                            <var class="price h4">Rs. {{ product.price }}.00</var>
                             <span class="text-muted"></span>
                         </div> <!-- price-detail-wrap .// -->
 
-                        <p>{{product.product_desription}}</p>
+                        <p>{{ product.product_description }}</p>
 
 
                         <dl class="row">
-                            
+
 
                             <dt class="col-sm-3">Color</dt>
                             <dd class="col-sm-9">{{ product.color_variant.name }}</dd>
@@ -65,48 +77,82 @@
                         </dl>
 
                         <hr>
-                        <div class="form-row">
-                            <div class="form-group col-md flex-grow-0">
-                                <label>Quantity</label>
-                                <div class="input-group mb-3 input-spinner">
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-light" type="button" id="button-plus"> + </button>
-                                    </div>
-                                    <input type="text" class="form-control" value="1">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-light" type="button" id="button-minus"> − </button>
+                        <form method="get" action="{% url 'add_to_cart' product.uid %}">
+                            <div class="form-row">
+                                <div class="form-group col-md flex-grow-0">
+                                    <label>Quantity</label>
+                                    <div class="input-group mb-3 input-spinner">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-light" type="button"
+                                                onclick="changeQty(-1)">−</button>
+                                        </div>
+                                        <input type="text" name="quantity" class="form-control" value="1"
+                                            id="qty-input">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-light" type="button"
+                                                onclick="changeQty(1)">+</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div> <!-- col.// -->
-                            {% if product.size_variant.count %}
-                            <div class="form-group col-md">
-                                <label>Select size</label>
-                                <div class="mt-1">
-                                    {% for size in product.size_variant.all %}
 
-                                    <label class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" name="select_size" checked="" class="custom-control-input">
-                                        <div class="custom-control-label">{{size.size_name}}</div>
-                                    </label>
-
-                                    {% endfor %}
-
+                                {% if product.size_variant.count %}
+                                <div class="form-group col-md">
+                                    <label>Select size</label>
+                                    <div class="mt-1">
+                                        {% for size in product.size_variant.all %}
+                                        <label class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" name="variant" value="{{ size.size_name }}"
+                                                class="custom-control-input" {% if forloop.first %}checked{% endif %}>
+                                            <div class="custom-control-label">{{ size.size_name }}</div>
+                                        </label>
+                                        {% endfor %}
+                                    </div>
                                 </div>
+                                {% endif %}
                             </div>
-                            {% endif %}
-                            <!-- col.// -->
-                        </div> <!-- row.// -->
-
-                        <a href="#" class="btn  btn-primary"> Buy now </a>
-                        <a href="{% url 'add_to_cart' product.uid %}?variant={{ size_variant.size_name }}" class="btn btn-outline-primary"> <span class="text">Add to cart</span> <i class="fas fa-shopping-cart"></i> </a>
+                            <a href="#" class="btn  btn-primary"> Buy now </a>
+                            <a href="{% url 'add_to_cart' product.uid %}?variant={{ size_variant.size_name }}"
+                                class="btn btn-outline-primary"> <span class="text">Add to cart</span> <i
+                                    class="fas fa-shopping-cart"></i> </a>
                     </article> <!-- product-info-aside .// -->
                 </main> <!-- col.// -->
             </div> <!-- row.// -->
         </div> <!-- card.// -->
         <!-- ============================ COMPONENT 1 END .// ================================= -->
-
-
     </div>
 </section>
 
+<!-- ✅ Modal for zoom view -->
+<div id="zoomModal" class="modal"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
+    <span onclick="closeModal()"
+        style="position:absolute; top:20px; right:30px; color:white; font-size:30px; cursor:pointer;">&times;</span>
+    <img id="zoomedImage" style="max-width:90%; max-height:90%;">
+</div>
+
+<script>
+    function changeQty(change) {
+        const input = document.getElementById('qty-input');
+        let value = parseInt(input.value) || 1;
+        value += change;
+        if (value < 1) value = 1;
+        input.value = value;
+    }
+
+    // ✅ Change main image on thumbnail click
+    function changeMainImage(src) {
+        document.getElementById("main-image").src = src;
+        document.getElementById("zoomedImage").src = src;
+    }
+
+    // ✅ Zoom functionality
+    document.getElementById("main-image-link").addEventListener("click", function (e) {
+        e.preventDefault();
+        document.getElementById("zoomModal").style.display = "flex";
+    });
+
+    function closeModal() {
+        document.getElementById("zoomModal").style.display = "none";
+    }
+</script>
 {% endblock %}

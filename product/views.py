@@ -12,6 +12,6 @@ def get_products(request, slug):
             context['selected_size'] = size
             context['updated_price'] = price
             print(price)
-        return render(request, 'product/product.html', context={'product': product})
+        return render(request, 'product/product.html', context)
     except Exception as e:
         print(e)
