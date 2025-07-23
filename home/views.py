@@ -7,5 +7,16 @@ def index(request):
 
 
 
+def search(request):
+    query = request.GET.get('query')
+    products = []
 
+    if query:
+        products = Product.objects.filter(product_name__icontains=query)
+
+    context = {
+        'products': products,
+        'query': query,
+    }
+    return render(request, 'home/search_results.html', context)
 
