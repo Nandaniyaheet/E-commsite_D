@@ -81,14 +81,8 @@ WSGI_APPLICATION = 'ecommers.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-if os.getenv('USE_SQLITE', 'True') == 'True':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-else:
+# Database configuration
+if os.getenv('ENVIRONMENT') == 'production':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -98,11 +92,17 @@ else:
             'HOST': os.getenv('DB_HOST'),
             'PORT': os.getenv('DB_PORT'),
             'OPTIONS': {
-                'sslmode': os.getenv('DB_SSLMODE', 'require'),
-                #'channel_binding': os.getenv('DB_CHANNEL_BINDING', 'require'),
-            },
+                'sslmode': 'require',
+            }
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 print("DB_HOST =", os.getenv("DB_HOST"))
 
 # Password validation
@@ -163,3 +163,7 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+# Add these settings at the bottom of the file
+FILE_CHARSET = 'utf-8'
+DEFAULT_CHARSET = 'utf-8'

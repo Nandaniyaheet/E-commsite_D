@@ -1,0 +1,95 @@
+[
+{
+    "model": "product.category",
+    "pk": "3308711f-593b-4a60-91eb-354ba306672d",
+    "fields": {
+        "created_at": "2025-07-24T12:35:16.506Z",
+        "Updated_at": "2025-07-24T12:35:16.506Z",
+        "category_name": "Rajwadi",
+        "slug": "rajwadi",
+        "category_image": "categories/IMG-20250721-WA0008_LuxzPGZ.jpg"
+    }
+},
+{
+    "model": "product.colorvariant",
+    "pk": "882190cb-b7a3-4fbe-b796-6591daa163a5",
+    "fields": {
+        "created_at": "2025-07-24T12:32:42.928Z",
+        "Updated_at": "2025-07-24T12:32:42.928Z",
+        "color_name": "Red",
+        "price": 0
+    }
+},
+{
+    "model": "product.colorvariant",
+    "pk": "a71cfbb5-3352-4a82-bec1-6a187df194ee",
+    "fields": {
+        "created_at": "2025-07-24T12:32:34.784Z",
+        "Updated_at": "2025-07-24T12:32:34.784Z",
+        "color_name": "Black",
+        "price": 0
+    }
+},
+{
+    "model": "product.sizevariant",
+    "pk": "8e0a3f74-68a8-46af-999d-cf5eb72bdf69",
+    "fields": {
+        "created_at": "2025-07-24T12:33:00.236Z",
+        "Updated_at": "2025-07-24T12:33:00.236Z",
+        "size_name": "L",
+        "price": 0
+    }
+},
+{
+    "model": "product.sizevariant",
+    "pk": "9f8f9e1c-c50d-4a85-9128-3fa8f78344d2",
+    "fields": {
+        "created_at": "2025-07-24T12:32:53.360Z",
+        "Updated_at": "2025-07-24T12:32:53.360Z",
+        "size_name": "S",
+        "price": 0
+    }
+},
+{
+    "model": "product.sizevariant",
+    "pk": "e1f389ab-a348-49f5-86cc-a046cbb583a3",
+    "fields": {
+        "created_at": "2025-07-24T12:33:06.574Z",
+        "Updated_at": "2025-07-24T12:33:06.574Z",
+        "size_name": "M",
+        "price": 0
+    }
+},
+{
+    "model": "product.product",
+    "pk": "c9b85565-8df2-4436-ab19-cc249f4b2b0d",
+    "fields": {
+        "created_at": "2025-07-24T12:36:47.626Z",
+        "Updated_at": "2025-07-24T12:36:47.626Z",
+        "product_name": "Rajwadi",
+        "slug": "rajwadi",
+        "category": "3308711f-593b-4a60-91eb-354ba306672d",
+        "price": 900,
+        "product_description": "Rajwadi cloths",
+        "color_variant": [
+            "882190cb-b7a3-4fbe-b796-6591daa163a5",
+            "a71cfbb5-3352-4a82-bec1-6a187df194ee"
+        ],
+        "size_variant": [
+            "8e0a3f74-68a8-46af-999d-cf5eb72bdf69",
+            "9f8f9e1c-c50d-4a85-9128-3fa8f78344d2",
+            "e1f389ab-a348-49f5-86cc-a046cbb583a3"
+        ]
+    }
+},
+{
+    "model": "product.productimage",
+    "pk": "f3d10f10-6d37-48e5-beef-4eab90bea404",
+    "fields": {
+        "created_at": "2025-07-24T12:36:47.636Z",
+        "Updated_at": "2025-07-24T12:36:47.636Z",
+        "product": "c9b85565-8df2-4436-ab19-cc249f4b2b0d",
+        "image": "product/IMG-20250721-WA0008_ATUSv7D.jpg"
+    }
+}
+]
