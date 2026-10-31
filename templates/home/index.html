@@ -18,7 +18,7 @@
                 </div>
                 <figcaption class="info-wrap border-top">
                     <a href="{% url 'get_products' product.slug %}" class="title">{{ product.product_name }}</a>
-                    <div class="price mt-2">${{ product.price }}</div>
+                    <div class="price mt-2">Rs.{{ product.price }}</div>
                 </figcaption>
             </figure>
         </div>
