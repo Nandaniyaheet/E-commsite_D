@@ -1,9 +1,10 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Sum
 from django.contrib.auth.models import User
 from base.models import BaseModel
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from base.emails import  send_account_activation_email
 from product.models import Coupon, Product, ColorVariant, SizeVariant  # Add this import for Coupon_
 import uuid
 
@@ -15,7 +16,11 @@ class Profile(BaseModel):
     profile_image = models.ImageField(upload_to = 'profile')
 
     def get_cart_count(self):
-        return CartItem.objects.filter(cart__is_paid=False, cart__user=self.user).count()
+        quantity = CartItem.objects.filter(
+            cart__is_paid=False,
+            cart__user=self.user,
+        ).aggregate(total=Sum('quantity'))['total']
+        return quantity or 0
     
 class Cart(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cart")
@@ -23,52 +28,42 @@ class Cart(BaseModel):
     is_paid = models.BooleanField(default=False)
   
     
+    def get_cart_subtotal(self):
+        return sum(
+            item.get_product_price() * item.quantity
+            for item in self.cart_items.select_related(
+                "product", "color_variant", "size_variant"
+            )
+        )
 
     def get_cart_total(self):
-        cart_items = self.cart_items.all()
-        price=[]
-        for cart_item in cart_items:
-            price.append(cart_item.product.price)
-            if cart_item.color_variant:
-                color_variant_price = cart_item.color_variant.price
-                price.append(color_variant_price)
-            if cart_item.size_variant:
-                size_variant_price = cart_item.size_variant.price
-                price.append(size_variant_price)
-
+        subtotal = self.get_cart_subtotal()
         if self.coupon:
-            print(self.coupon.minimum_amount)
-            print(sum(price))
-            if self.coupon.minimum_amount < sum(price):
-               return sum(price) - self.coupon.discount_price
-        return sum(price)
+            return self.coupon.get_discounted_price(subtotal)
+        return subtotal
 
 class CartItem(BaseModel):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_items")
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True, related_name="cart_items")
     color_variant = models.ForeignKey(ColorVariant, on_delete=models.SET_NULL, null=True, blank=True, related_name="cart_items")
     size_variant = models.ForeignKey(SizeVariant, on_delete=models.SET_NULL, null=True, blank=True, related_name="cart_items")
-
+    quantity = models.PositiveSmallIntegerField(
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(99)],
+    )
 
     def get_product_price(self):
-        price = [self.product.price]
+        if self.product is None:
+            return 0
 
+        price = [self.product.price]
         if self.color_variant:
-            color_variant_price = self.color_variant.price
-            price.append(color_variant_price)
+            price.append(self.color_variant.price)
         if self.size_variant:
-            size_variant_price = self.size_variant.price
-            price.append(size_variant_price)
+            price.append(self.size_variant.price)
         return sum(price)
 
 @receiver(post_save , sender = User)
-def  send_email_token(sender , instance , created , **kwargs):
-    try:
-        if created:
-            email_token = str(uuid.uuid4())
-            Profile.objects.create(user = instance , email_token = email_token)
-            email = instance.email
-            send_account_activation_email(email , email_token)
-
-    except Exception as e:
-        print(e)
+def send_email_token(sender, instance, created, raw=False, **kwargs):
+    if created and not raw:
+        Profile.objects.create(user=instance, email_token=str(uuid.uuid4()))

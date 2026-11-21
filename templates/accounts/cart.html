@@ -23,36 +23,47 @@
                                 <td>
                                     <figure class="itemside">
                                         <div class="aside">
+                                            {% if cart_item.product %}
                                             {% if cart_item.product.product_images.first %}
                                             <img src="/media/{{cart_item.product.product_images.first.image}}"
                                                 class="img-sm">
                                             {% else %}
                                             <img src="/static/images/default.png" class="img-sm">
                                             {% endif %}
+                                            {% else %}
+                                            <span>Unavailable</span>
+                                            {% endif %}
                                         </div>
                                         <figcaption class="info">
+                                            {% if cart_item.product %}
                                             <a href="{% url 'get_products' cart_item.product.slug %}"
                                                 class="title text-dark">
                                                 {{cart_item.product.product_name}}
                                             </a>
-                                            {% if cart_item.color_variant %}
+                                            {% else %}
+                                            <span class="text-muted">This product is no longer available.</span>
+                                            {% endif %}
+                                            {% if cart_item.size_variant or cart_item.color_variant %}
                                             <p class="text-muted small">
-                                                Size: {{ cart_item.size_variant }},
-                                                Color: {{ cart_item.color_variant }},
-                                                <br>
-                                                Brand: {{ cart_item.product.brand }}
+                                                {% if cart_item.size_variant %}Size: {{ cart_item.size_variant }}{% endif %}
+                                                {% if cart_item.color_variant %}Color: {{ cart_item.color_variant }}{% endif %}
                                             </p>
                                             {% endif %}
                                         </figcaption>
                                     </figure>
                                 </td>
                                 <td>
-                                    <select class="form-control" name="quantity">
-                                        {% for i in quantity_range %}
-                                        <option value="{{ i }}" {% if cart_item.quantity == i %}selected{% endif %}>{{ i }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    </select>
+                                    <form method="post" action="{% url 'update_cart_item' cart_item.uid %}">
+                                        {% csrf_token %}
+                                        <select class="form-control" name="quantity" onchange="this.form.submit()">
+                                            {% for i in quantity_range %}
+                                            <option value="{{ i }}" {% if cart_item.quantity == i %}selected{% endif %}>{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <noscript>
+                                            <button type="submit" class="btn btn-sm btn-light mt-1">Update quantity</button>
+                                        </noscript>
+                                    </form>
                                 </td>
                                 <td>
                                     <div class="price-wrap">
@@ -63,7 +74,10 @@
                                 <td class="text-right">
                                     <a data-original-title="Save to Wishlist" title="" href="" class="btn btn-light"
                                         data-toggle="tooltip"> <i class="fa fa-heart"></i></a>
-                                    <a href="{% url 'remove_cart' cart_item.uid %}" class="btn btn-light"> Remove</a>
+                                    <form method="post" action="{% url 'remove_cart' cart_item.uid %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-light">Remove</button>
+                                    </form>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -99,11 +113,13 @@
                                     </span>
                                 </div>
                             </div>
-                            {% if cart.coupon %}
-                            <a href="{% url 'remove_coupon' cart.uid %}" class="btn btn-success">{{
-                                cart.coupon.coupon_code}}</a>
-                            {% endif %}
                         </form>
+                        {% if cart.coupon %}
+                        <form method="post" action="{% url 'remove_coupon' cart.uid %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">{{ cart.coupon.coupon_code }} &times;</button>
+                        </form>
+                        {% endif %}
                     </div> <!-- card-body.// -->
                 </div> <!-- card .// -->
                 <div class="card">

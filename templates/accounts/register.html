@@ -21,10 +21,10 @@
                 </div>
 
                 <div class="form-group">
-                    <input  class="form-control" required placeholder="Email" name="email" type="text" autocomplete="email">
+                    <input class="form-control" required placeholder="Email" name="email" type="email" autocomplete="email">
                 </div> <!-- form-group// -->
                 <div class="form-group">
-                    <input class="form-control" required placeholder="Password" name="password" type="password" autocomplete="current-password">
+                    <input class="form-control" required placeholder="Password" name="password" type="password" autocomplete="new-password">
                 </div> <!-- form-group// -->
 
 
@@ -35,7 +35,7 @@
         </div> <!-- card-body.// -->
     </div> <!-- card .// -->
 
-    <p class="text-center mt-4">Already have account? <a href="#">Sign in</a></p>
+    <p class="text-center mt-4">Already have account? <a href="{% url 'login' %}">Sign in</a></p>
     <br><br>
     <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
 

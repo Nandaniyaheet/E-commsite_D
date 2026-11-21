@@ -46,7 +46,8 @@ class Product(BaseModel):
         return self.product_name
 
     def get_product_price_by_size(self, size):
-        return self.price  + SizeVariant.objects.get(size_name=size).price
+        size_variant = self.size_variant.get(size_name=size)
+        return self.price + size_variant.price
 
 class ProductImage(BaseModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_images")
@@ -63,4 +64,6 @@ class Coupon(BaseModel):
         return self.coupon_code
 
     def get_discounted_price(self, price):
-        return price - (price * self.discount / 100) if self.is_active else price
+        if self.is_expired or price < self.minimum_amount:
+            return price
+        return max(price - self.discount_price, 0)

@@ -30,3 +30,13 @@ must be present under `media/` for product images to display.
 
 For production, configure the required environment variables in a local,
 untracked environment file. Do not store credentials in the repository.
+
+## Render deployment
+
+- Build command: `pip install -r requirements.txt && python manage.py collectstatic --no-input`
+- Start command: `python manage.py migrate --noinput && gunicorn ecommers.wsgi:application --bind 0.0.0.0:$PORT`
+- Set `ENVIRONMENT=production`, `DEBUG=False`, `SECRET_KEY`, `ALLOWED_HOSTS`,
+  `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `SITE_URL`,
+  `EMAIL_HOST_USER`, and `EMAIL_HOST_PASSWORD` in the Render service environment.
+- Store uploaded media in persistent or object storage; the Render service
+  filesystem is not a durable media store.
