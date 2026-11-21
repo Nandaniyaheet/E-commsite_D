@@ -1,6 +1,7 @@
 from cmath import log
-from tkinter import E
+# from tkinter import E
 from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate , login , logout
@@ -78,6 +79,7 @@ def activate_email(request , email_token):
 
 
 
+@login_required
 def add_to_cart(request, uid):
     variant = request.GET.get('variant')
     product = Product.objects.get(uid=uid)
@@ -92,6 +94,7 @@ def add_to_cart(request, uid):
     messages.success(request, 'Item added to cart.')
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+@login_required
 def remove_from_cart(request, cart_item_uid):
     try:
         cart_item = CartItem.objects.get(uid=cart_item_uid)
@@ -101,6 +104,7 @@ def remove_from_cart(request, cart_item_uid):
         print(e)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+@login_required
 def cart(request):
     cart_obj, _ = Cart.objects.get_or_create(user=request.user, is_paid=False)
 
@@ -147,6 +151,7 @@ def cart(request):
     return render(request, 'accounts/cart.html', context)
 
 
+@login_required
 def remove_coupon(request, cart_id):
     cart = Cart.objects.get(uid=cart_id)
     cart.coupon = None
